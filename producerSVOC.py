@@ -1,4 +1,4 @@
-#from confluent_kafka import Producer
+from confluent_kafka import Producer
 from random import choice
 from time import sleep
 import json
@@ -12,16 +12,16 @@ Initialize your Python environment!
     source .venv/bin/activate
 """
 
-#def delivery_report(err, msg):
-#    """ Called once for each message produced to indicate delivery result.
-#        Triggered by poll() or flush(). """
-#    if err is not None:
-#        print('Message delivery failed: {}'.format(err))
-#    else:
-#        print('Message delivered to {} [{}]'.format(msg.topic(), msg.partition()))
+def delivery_report(err, msg):
+    """ Called once for each message produced to indicate delivery result.
+        Triggered by poll() or flush(). """
+    if err is not None:
+        print('Message delivery failed: {}'.format(err))
+    else:
+        print('Message delivered to {} [{}]'.format(msg.topic(), msg.partition()))
 
 #declare producer
-#p = Producer({'bootstrap.servers': 'localhost:29092'})
+p = Producer({'bootstrap.servers': 'localhost:29092'})
 
 #initialize lists to append to
 lstSubject = []
@@ -49,11 +49,11 @@ with open('complement.txt') as txtComplement:
 #produce random sentences until you stop the stream and post them to the topic svoc
 while True:
     randSVOC = f'SVOC: {choice(lstSubject)} {choice(lstVerb)} {choice(lstObject)} {choice(lstComplement)}'
-    print(randSVOC)
-#    p.poll(0)
-#    p.produce('svoc', randSVOC.encode('utf-8'), callback=delivery_report)
+#    print(randSVOC)
+    p.poll(0)
+    p.produce('svoc', randSVOC.encode('utf-8'), callback=delivery_report)
     #wait 3 seconds between producing sentences
     sleep(5)
 
 #idk what this does but I know it needs to exist
-#p.flush()
+p.flush()
